@@ -1,0 +1,185 @@
+SELECT * FROM exponat WHERE sectie = 'Paintings';
+ nr_matricol |               denumire                | an_sosire | vechime | valoare |  sectie
+-------------+---------------------------------------+-----------+---------+---------+-----------
+      100013 | Portrait de l'artiste et de son frŔre |      2015 |     190 |   15000 | Paintings
+      100420 | Georges Cadoudal                      |      1995 |     194 |   17000 | Paintings
+      100603 | La France victorieuse                 |      2020 |     216 |  200000 | Paintings
+      101405 | L'Assomption                          |      2005 |     280 |  350000 | Paintings
+      110250 | VÚnus et Adonis                       |      2010 |     357 |  400000 | Paintings
+(5 rows)
+
+
+SELECT * FROM donator WHERE data_donatiei > '10-Nov-2019';
+ data_donatiei | tip_donatie |        nume         |         adresa         |  telefon   | id_donatie
+---------------+-------------+---------------------+------------------------+------------+------------
+ 2020-07-03    | Painting    |                     |                        |            |     100603
+ 2020-10-07    | Painting    | Guendolen Rigardeau | 9686 Namekagon Parkway | 0748295013 |     100603
+(2 rows)
+
+
+SELECT nr_matricol, exponat.denumire
+FROM exponat
+INNER JOIN sectie
+ON exponat.sectie = sectie.denumire;
+ nr_matricol |                 denumire
+-------------+------------------------------------------
+      234195 | statue naophore ; statue cube
+      220368 | statue ; Statue de NÚsa
+      210834 | statue ; Tŕte de princesse amarnienne
+      202686 | Serviteur funÚraire de ToutÔnkhamon
+      201730 | figurine de BŔs au tambourin ; pendentif
+      200505 | figurine d'Harpocrate au pot
+      301450 | Chaise en bois noir de style Louis XIV
+      300245 |  boţte Ó couvercle Ó glissiŔre
+      300145 | Coffre de KhÔtaouy
+      300081 | chevet Ó tronc octogonal
+      303870 | Bacchus
+      303457 | Chute de fleurs
+      303165 | Le Combat du Tessin
+      303045 | L'incendie du camp
+      303000 | Jean Bullant, architecte, 1578
+      401364 | DiadŔme de l'ImpÚratrice EugÚnie
+      400867 | Ippolita Gonzaga
+      400520 | Couronne de l'ImpÚratrice EugÚnie
+      400132 | parure de la duchesse d'Angoulŕme
+      400043 | Marie Tudor, reine d'Angleterre
+      110250 | VÚnus et Adonis
+      101405 | L'Assomption
+      100603 | La France victorieuse
+      100420 | Georges Cadoudal
+      100013 | Portrait de l'artiste et de son frŔre
+(25 rows)
+
+
+SELECT nr_matricol, exponat.denumire
+FROM exponat
+INNER JOIN sectie
+ON exponat.sectie = sectie.denumire
+WHERE valoare >= 100000;
+ nr_matricol |                 denumire
+-------------+------------------------------------------
+      234195 | statue naophore ; statue cube
+      220368 | statue ; Statue de NÚsa
+      210834 | statue ; Tŕte de princesse amarnienne
+      202686 | Serviteur funÚraire de ToutÔnkhamon
+      201730 | figurine de BŔs au tambourin ; pendentif
+      200505 | figurine d'Harpocrate au pot
+      300245 |  boţte Ó couvercle Ó glissiŔre
+      300145 | Coffre de KhÔtaouy
+      303165 | Le Combat du Tessin
+      401364 | DiadŔme de l'ImpÚratrice EugÚnie
+      400520 | Couronne de l'ImpÚratrice EugÚnie
+      400132 | parure de la duchesse d'Angoulŕme
+      110250 | VÚnus et Adonis
+      101405 | L'Assomption
+      100603 | La France victorieuse
+(15 rows)
+
+
+SELECT COUNT(nr_matricol), exponat.vechime
+FROM exponat
+INNER JOIN sectie
+ON exponat.sectie = sectie.denumire
+GROUP BY exponat.vechime;
+ count | vechime
+-------+---------
+     2 |     194
+     1 |    3200
+     2 |    3500
+     1 |     168
+     1 |    3440
+     1 |     280
+     1 |    2200
+     1 |     179
+     2 |     420
+     1 |    4700
+     1 |     234
+     1 |     153
+     1 |     190
+     1 |     357
+     1 |     332
+     1 |    2000
+     1 |     300
+     1 |    3300
+     1 |     216
+     1 |     465
+     1 |    3000
+     1 |     246
+(22 rows)
+
+
+SELECT COUNT(id_bilet), vizitator.nume
+FROM bilet
+INNER JOIN vizitator
+ON bilet.vizitator = vizitator.nr_ordine
+GROUP BY vizitator.nume;
+ count |      nume
+-------+-----------------
+     2 | Clayton Gibbard
+     1 | Annette Gailor
+     1 | Milo Bromet
+     1 | Jenny Lower
+(4 rows)
+
+
+SELECT COUNT(d.data_donatiei), s.denumire
+FROM donator AS d
+INNER JOIN exponat AS e ON e.nr_matricol = d.id_donatie
+INNER JOIN sectie AS s ON s.denumire = e.sectie
+GROUP BY s.denumire;
+ count |      denumire
+-------+---------------------
+     2 | Jewellery & Finery
+     1 | Textiles
+     2 | Paintings
+(3 rows)
+
+
+SELECT MAX(valoare), sectie
+FROM exponat
+GROUP BY sectie
+HAVING MAX(valoare) >= 400000;
+   max   |       sectie
+---------+---------------------
+ 3000000 | Sculptures
+  400000 | Paintings
+  523400 | Jewellery & Finery
+(3 rows)
+
+
+SELECT denumire, valoare, an_sosire
+FROM exponat
+GROUP BY an_sosire, valoare, denumire
+HAVING valoare < 500000;
+                denumire                | valoare | an_sosire
+----------------------------------------+---------+-----------
+ Ippolita Gonzaga                       |   64500 |      2015
+ Chaise en bois noir de style Louis XIV |   30000 |      2015
+  boţte Ó couvercle Ó glissiŔre         |  150000 |      2004
+ L'incendie du camp                     |   89000 |      2011
+ Le Combat du Tessin                    |  100000 |      2012
+ Portrait de l'artiste et de son frŔre  |   15000 |      2015
+ Marie Tudor, reine d'Angleterre        |   54000 |      2010
+ Georges Cadoudal                       |   17000 |      1995
+ VÚnus et Adonis                        |  400000 |      2010
+ L'Assomption                           |  350000 |      2005
+ Chute de fleurs                        |   73000 |      2007
+ Jean Bullant, architecte, 1578         |   15000 |      1990
+ La France victorieuse                  |  200000 |      2020
+ DiadŔme de l'ImpÚratrice EugÚnie       |  354000 |      2016
+ Coffre de KhÔtaouy                     |  200000 |      1996
+ chevet Ó tronc octogonal               |   52000 |      2011
+ Bacchus                                |   45000 |      2011
+(17 rows)
+
+
+SELECT id_bilet, sectia FROM bilet
+ORDER BY data ASC;
+ id_bilet |   sectia
+----------+------------
+      523 | Paintings
+      542 | Sculptures
+      753 | Furniture
+      564 | Textiles
+      765 | Paintings
+(5 rows)
